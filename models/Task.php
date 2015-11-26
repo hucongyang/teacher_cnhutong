@@ -135,6 +135,12 @@ class Task extends CActiveRecord
         return $data;
     }
 
+    /**
+     * 提交任务签到接口:
+     * 教师在App中提交学员课时签到信息
+     * @param $lessonStudentIds
+     * @return bool
+     */
     public function postSign($lessonStudentIds)
     {
 
