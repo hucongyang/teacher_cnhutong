@@ -167,4 +167,42 @@ class Task extends CActiveRecord
         }
         return $command;
     }
+
+    /**
+     * 获得任务课时详情接口:
+     * 获取教师某课时学员信息以及课时内容课时评价
+     * @param $user_id
+     * @param $lessonDate
+     * @param $lessonTime
+     * @return array|bool
+     */
+    public function getLessonDetails($user_id, $lessonDate, $lessonTime)
+    {
+        $data = array();
+        try {
+            $con_task = Yii::app()->cnhutong;
+            // 获得任务课时详情
+            $sql = "SELECT
+                    a.id AS lessonStudentId, a.student_id AS studentId, m.`name` AS studentName, a.step AS lessonStatus,
+                    IFNULL(lt.topic, '') AS lessonContent,
+                    IFNULL(a.student_rating, '') AS studentGrade, a.student_comment AS studentEval
+                    FROM ht_lesson_student AS a
+                    LEFT JOIN ht_member m ON m.id = a.student_id
+                    LEFT JOIN ht_lesson_student_topic lst ON lst.lesson_student_id = a.id
+                    LEFT JOIN ht_lesson_topics lt ON lt.id = lst.lesson_topic_id
+                    WHERE a.step >= 0 AND a.step NOT IN (4,5)
+                    AND a.teacher_id = " . $user_id . "
+                    AND a.date = '" . $lessonDate . "'
+                    AND a.time = '" . $lessonTime . "'
+                    AND a.status_id NOT IN (1, 2, 4)
+                    order by a.student_id";
+            $command = $con_task->createCommand($sql)->queryAll();
+            $data['lessonDetails'] = $command;
+        } catch (Exception $e) {
+            error_log($e);
+            var_dump($e);
+            return false;
+        }
+        return $data;
+    }
 }

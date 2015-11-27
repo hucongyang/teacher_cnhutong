@@ -124,4 +124,44 @@ class TaskController extends ApiPublicController
             $this->_return('MSG_ERR_TOKEN');
         }
     }
+
+    /**
+     * 获得任务课时详情接口
+     */
+    public function actionGetLessonDetails()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
+        || !isset($_REQUEST['lessonDate']) || !isset($_REQUEST['lessonTime'])
+        || !isset($_REQUEST['departmentId']) ) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId'));
+        $token = trim(Yii::app()->request->getParam('token'));
+        $lessonDate = trim(Yii::app()->request->getParam('lessonDate'));
+        $lessonTime = trim(Yii::app()->request->getParam('lessonTime'));
+        $departmentId = trim(Yii::app()->request->getParam('departmentId'));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户名不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        if (!ctype_digit($departmentId)) {
+            $this->_return('MSG_ERR_DEPARTMENT');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 获得任务课时详情
+            $data = Task::model()->getLessonDetails($user_id, $lessonDate, $lessonTime);
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
 }
