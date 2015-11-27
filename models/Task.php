@@ -138,23 +138,29 @@ class Task extends CActiveRecord
     /**
      * 提交任务签到接口:
      * 教师在App中提交学员课时签到信息
-     * @param $lessonStudentIds
-     * @return bool
+     * @param $lessonJson
+     * @return bool|int
      */
-    public function postSign($lessonStudentIds)
+    public function postSign($lessonJson)
     {
-
+        $command = 1;
         try {
             $con_task = Yii::app()->cnhutong;
-            // 提交学员ID进行签到
-            $sql = "UPDATE
-                    ht_lesson_student AS a
-                    SET a.status_id = 1
-                    WHERE a.id = 256996";
-            $sql2 = "UPDATE
-                    ht_lesson_student AS a
-                    SET a.step = 0";
-            $command = $con_task->createCommand($sql)->query();
+            $table_name = 'ht_lesson_student';
+            // 按照课时ID进行签到,ht_lesson_student: status_id = 1(老师签到),step = 0 正常| step = 2 缺勤
+            foreach ($lessonJson as $row) {
+                $result = $con_task->createCommand()->update($table_name,
+                    array(
+                        'status_id' => 1,
+                        'step' => $row['step']
+                    ),
+                    'id = :id',
+                    array(
+                        ':id' => $row['lessonStudentId']
+                    )
+                );
+            }
+
         } catch (Exception $e) {
             error_log($e);
             return false;

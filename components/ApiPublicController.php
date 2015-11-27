@@ -406,7 +406,6 @@ class ApiPublicController extends Controller
 		$json_str = str_replace('\\', '', $json_str);
 		$out_arr = array();
 		preg_match('/\{.*\}/', $json_str, $out_arr);
-		var_dump($out_arr);
 		if (!empty($out_arr)) {
 			$result = json_decode($out_arr[0], true);
 		} else {

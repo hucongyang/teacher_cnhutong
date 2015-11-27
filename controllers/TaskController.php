@@ -105,17 +105,21 @@ class TaskController extends ApiPublicController
 
         // 解析json，获得课时id和课时step
         $lessonJson = json_decode($lessonStudentIds, true);
-        $lessonStudentId = array_column($lessonJson, 'lessonStudentId');
-        $step = array_column($lessonJson, 'step');
-        if (!is_array($lessonStudentId) || !is_array($step)) {
-            $this->_return('MSG_ERR_FAIL_LESSONSTUDENTID');
-        }
+
+//        foreach ($lessonJson as $row) {
+//            var_dump($row['lessonStudentId'] . ' + ' . $row['step']);
+//        }
+//        var_dump($lessonJson);
 
         // 验证token
         if (Token::model()->verifyToken($user_id, $token)) {
             // 提交任务签到
-            //$data = Task::model()->postSign($lessonStudentIds);
-            $this->_return('MSG_SUCCESS');
+            $data = Task::model()->postSign($lessonJson);
+            if ($data > 0) {
+                $this->_return('MSG_SUCCESS');
+            } else {
+                $this->_return('MSG_ERR_FAIL_LESSONSTUDENTID_STEP');       // 前端数据格式错误，sql 执行错误
+            }
         } else {
             $this->_return('MSG_ERR_TOKEN');
         }
