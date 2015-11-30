@@ -20,7 +20,8 @@ $_error_code = array(
         'MSG_ERR_TOKEN'                     => array('20004', 'TOKEN验证错误'),
         'MSG_ERR_DEPARTMENT'                => array('20005', '校区不存在'),
 		'MSG_ERR_FAIL_LESSONSTUDENTIDS'		=> array('20006', '课时参数错误'),
-		'MSG_ERR_FAIL_LESSONSTUDENTID_STEP'	=> array('20007', '课时ID或状态错误'),
+		'MSG_ERR_FAIL_LESSON_FORMAT'		=> array('20007', '课时格式错误'),
+		'MSG_ERR_FAIL_LESSONDETAILS'		=> array('20008', '课时详情参数错误'),
 
 
 		// 其它

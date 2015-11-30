@@ -77,7 +77,7 @@ class Task extends CActiveRecord
             $result = array();
             $merge = array();
             foreach ($command2 as $row) {
-                if (strtotime(substr($row['lessonTime'], -5)) < strtotime($time)) {
+                if (substr($row['lessonTime'], -5) < $time) {
                     $result['lessonDate'] = $row['lessonDate'];
                     $result['lessonTime'] = $row['lessonTime'];
                     $result['subjectName'] = $row['subjectName'];
@@ -91,7 +91,8 @@ class Task extends CActiveRecord
 //                }else {
 //                    $merge[] = $result;
                 }
-                $data['task'] = array_merge($data['task'], $merge);
+//                $data['task'] = array_merge($data['task'], $merge);
+                $data['task'] = $merge;
             }
 
         } catch (Exception $e) {
@@ -116,8 +117,7 @@ class Task extends CActiveRecord
             $con_task = Yii::app()->cnhutong;
             // 获得任务签到
             $sql = "SELECT
-                    a.id AS lessonStudentId, a.student_id AS studenId, b.`name` AS studentName, a.step AS step,
-                    a.status_id AS status_id
+                    a.id AS lessonStudentId, a.student_id AS studenId, b.`name` AS studentName
                     FROM ht_lesson_student AS a
                     LEFT JOIN ht_member b ON a.student_id = b.id
                     WHERE a.step >= 0 AND a.step NOT IN (4,5)
@@ -149,6 +149,7 @@ class Task extends CActiveRecord
             $table_name = 'ht_lesson_student';
             // 按照课时ID进行签到,ht_lesson_student: status_id = 1(老师签到),step = 0 正常| step = 2 缺勤
             foreach ($lessonJson as $row) {
+                // 需要对$lessonJson里面的数值做判断 if...
                 $result = $con_task->createCommand()->update($table_name,
                     array(
                         'status_id' => 1,
@@ -204,5 +205,39 @@ class Task extends CActiveRecord
             return false;
         }
         return $data;
+    }
+
+    /**
+     * 提交任务课时详情内容接口
+     * 教师在APP中提交学员课时详情内容信息
+     * @param $lessonJson
+     * @return bool|int
+     */
+    public function postLessonDetail($lessonJson)
+    {
+        $now = date("Y-m-d H:i:s");
+        $command = 1;
+        try {
+            $con_task = Yii::app()->cnhutong;
+            $table_name = 'ht_lesson_student';
+            // 提交任务课时详情
+            foreach ($lessonJson as $row) {
+                $result = $con_task->createCommand()->update($table_name,
+                    array(
+                        'lesson_content' => $row['modifyContent'],
+                        'teacher_rating' => $row['teacherGrade'],
+                        'teacher_comment'=> $row['teacherEval']
+                    ),
+                    'id = :id',
+                    array(
+                        ':id' => $row['lessonStudentId']
+                    )
+                );
+            }
+        } catch (Exception $e) {
+            error_log($e);
+            return false;
+        }
+        return $command;
     }
 }
