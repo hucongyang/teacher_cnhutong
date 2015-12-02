@@ -65,6 +65,11 @@ class TaskController extends ApiPublicController
             $this->_return('MSG_ERR_DEPARTMENT');
         }
 
+        // 验证日期格式合法
+        if (!$this->isDate($lessonDate)) {
+            $this->_return('MSG_ERR_FAIL_DATE_FORMAT');
+        }
+
         // 验证token
         if (Token::model()->verifyToken($user_id, $token)) {
             // 获取任务签到
@@ -148,6 +153,11 @@ class TaskController extends ApiPublicController
 
         if (!ctype_digit($departmentId)) {
             $this->_return('MSG_ERR_DEPARTMENT');
+        }
+
+        // 验证日期格式合法
+        if (!$this->isDate($lessonDate)) {
+            $this->_return('MSG_ERR_FAIL_DATE_FORMAT');
         }
 
         // 验证token

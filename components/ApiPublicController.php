@@ -413,4 +413,19 @@ class ApiPublicController extends Controller
 		}
 		return $result;
 	}
+
+	/**
+	 * 判断是否为合法的日期格式
+	 * @param $date
+	 * @return bool|string
+     */
+	public function isDate($date)
+	{
+		$isDate = strtotime($date) ? strtotime($date) : false;
+		if ($isDate === false) {
+			return false;			// 非法格式
+		} else {
+			return date("Y-m-d", strtotime($date));			// 只要是合法的日期，这里都统一成2014-11-11格式
+		}
+	}
 }

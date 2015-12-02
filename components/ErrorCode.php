@@ -22,10 +22,12 @@ $_error_code = array(
 		'MSG_ERR_FAIL_LESSONSTUDENTIDS'		=> array('20006', '课时参数错误'),
 		'MSG_ERR_FAIL_LESSON_FORMAT'		=> array('20007', '课时格式错误'),
 		'MSG_ERR_FAIL_LESSONDETAILS'		=> array('20008', '课时详情参数错误'),
+		'MSG_ERR_FAIL_DATE_FORMAT'			=> array('20009', '日期格式错误'),
+		'MSG_ERR_FAIL_DATE_LESS'			=> array('20010', '缺少必要的日期内容'),
 
 
 		// 其它
-		'MSG_ERR_FAIL_SQL'					=> array('20008', 'SQL执行错误'),
+		'MSG_ERR_FAIL_SQL'					=> array('88888', 'SQL执行错误'),
 		'MSG_ERR_UNKOWN'			=> array('99999', '系统繁忙，请稍后再试')
 );
 
