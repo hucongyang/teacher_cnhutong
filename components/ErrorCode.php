@@ -24,6 +24,9 @@ $_error_code = array(
 		'MSG_ERR_FAIL_LESSONDETAILS'		=> array('20008', '课时详情参数错误'),
 		'MSG_ERR_FAIL_DATE_FORMAT'			=> array('20009', '日期格式错误'),
 		'MSG_ERR_FAIL_DATE_LESS'			=> array('20010', '缺少必要的日期内容'),
+		'MSG_ERR_FAIL_SUBJECT'				=> array('20011', '课程参数错误'),
+		'MSG_ERR_FAIL_DEPARTMENT'			=> array('20012', '校区参数错误'),
+		'MSG_ERR_FAIL_STUDENT'				=> array('20013', '学员参数错误'),
 
 
 		// 其它
