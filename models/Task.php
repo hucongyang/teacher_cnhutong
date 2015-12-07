@@ -10,6 +10,36 @@ class Task extends CActiveRecord
         return parent::model($className);
     }
 
+    public function verifyTask($lessonStudentId)
+    {
+        $nowDate = date("Y-m-d");       // 当前日期
+        $nowDate_1 = date("Y-m-d", strtotime("-1 day"));        // 当前日期减 1
+        $nowTime = date("H:i");         // 当前时间
+        try {
+            $con_task = Yii::app()->cnhutong;
+            $sql = "SELECT a.date, a.time
+                    FROM ht_lesson_student AS a
+                    WHERE a.id = '" . $lessonStudentId . "'
+                    ";
+            $command = $con_task->createCommand($sql)->queryRow();
+            var_dump($sql);
+            if ($command['date'] > $nowDate) {
+                return false;
+            } elseif ($command['date'] < $nowDate_1) {
+                return false;
+            } else {
+                if (substr($command['time'], -5) < $nowTime) {
+                    return false;
+                }
+                return true;
+            }
+
+        } catch (Exception $e) {
+            error_log($e);
+            return false;
+        }
+    }
+
     /**
      * 任务列表：
      * 教师上课后，若是未进行学员是否出勤的确认，将显示一条任务
@@ -68,9 +98,9 @@ class Task extends CActiveRecord
             $command2 = $con_task->createCommand($sql2)->queryAll();
 
             if ($rHour >= 15) {                 // 时间限制,当前日期时间 15时 以后不显示前一天的课时任务
-                $data['task'] = array();
+                $data['task'][] = array();
             } else {
-                $data['task'] = $command1;
+                $data['task'][ $yesterday ] = $command1;
             }
 //            $data[" $date "] = $command2;
             // 未到时间的课时不显示
@@ -92,7 +122,7 @@ class Task extends CActiveRecord
 //                    $merge[] = $result;
                 }
 //                $data['task'] = array_merge($data['task'], $merge);
-                $data['task'] = $merge;
+                $data['task'][ $date ] = $merge;
             }
 
         } catch (Exception $e) {
