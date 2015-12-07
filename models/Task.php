@@ -100,7 +100,7 @@ class Task extends CActiveRecord
             if ($rHour >= 15) {                 // 时间限制,当前日期时间 15时 以后不显示前一天的课时任务
                 $data['task'][] = array();
             } else {
-                $data['task'][ $yesterday ] = $command1;
+                $data['task']['yesterday'] = $command1;
             }
 //            $data[" $date "] = $command2;
             // 未到时间的课时不显示
@@ -122,7 +122,7 @@ class Task extends CActiveRecord
 //                    $merge[] = $result;
                 }
 //                $data['task'] = array_merge($data['task'], $merge);
-                $data['task'][ $date ] = $merge;
+                $data['task']['today'] = $merge;
             }
 
         } catch (Exception $e) {
