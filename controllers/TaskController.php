@@ -29,6 +29,7 @@ class TaskController extends ApiPublicController
         if (Token::model()->verifyToken($user_id, $token)) {
             // 获取任务列表
             $data = Task::model()->getTaskList($user_id);
+//            var_dump($data);
             $this->_return('MSG_SUCCESS', $data);
         } else {
             $this->_return('MSG_ERR_TOKEN');
@@ -104,12 +105,13 @@ class TaskController extends ApiPublicController
             $this->_return('MSG_ERR_NO_USER');
         }
 
-        if (empty($lessonStudentIds) || ($this->isJson($lessonStudentIds))) {
+        $lessonJson = json_decode($lessonStudentIds, true);
+        if (empty($lessonStudentIds) || !$lessonJson ) {
             $this->_return('MSG_ERR_FAIL_LESSONSTUDENTIDS');
         }
 
         // 解析json，获得课时id: $lessonStudentId 和课时step: $step
-        $lessonJson = json_decode($lessonStudentIds, true);
+
 
         // 验证token
         if (Token::model()->verifyToken($user_id, $token)) {
@@ -170,6 +172,9 @@ class TaskController extends ApiPublicController
         }
     }
 
+    /**
+     * 提交任务课时详情内容接口
+     */
     public function actionPostLessonDetails()
     {
         if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
@@ -210,5 +215,18 @@ class TaskController extends ApiPublicController
         } else {
             $this->_return('MSG_ERR_TOKEN');
         }
+    }
+
+    public function actionTask()
+    {
+        if (!isset($_REQUEST['lessonStudentId'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $lessonStudentId = trim(Yii::app()->request->getParam('lessonStudentId'));
+
+        $data = Task::model()->verifyTask($lessonStudentId);
+        var_dump($data);
+        $this->_return('MSG_SUCCESS', $data);
     }
 }
