@@ -136,4 +136,215 @@ class UserController extends ApiPublicController
             $this->_return('MSG_ERR_TOKEN');
         }
     }
+
+    /**
+     * 留言/通知信息状态接口
+     */
+    public function actionGetMessageNoticeFlag()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        $data = array();
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 留言/通知信息状态
+            $messageFlag = 1;
+            $noticeFlag = 0;
+            $data['messageFlag'] = $messageFlag;
+            $data['noticeFlag'] = $noticeFlag;
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
+
+    /**
+     * 用户登录后获得个人中心详细信息
+     */
+    public function actionGetUserDetailInfo()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户名不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 个人详细信息
+            $data = User::model()->getUserDetailInfo($user_id);
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
+
+    /**
+     * 教师查看工资接口
+     */
+    public function actionMyRecord()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
+        || !isset($_REQUEST['date']) || !isset($_REQUEST['departmentId'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+        $date = trim(Yii::app()->request->getParam('date', null));
+        $departmentId = trim(Yii::app()->request->getParam('departmentId', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 教师查看工资
+            $data = User::model()->myReword($user_id, $date, $departmentId);
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
+
+    /**
+     * 教师提交留言信息接口
+     */
+    public function actionPostMessage()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
+            || !isset($_REQUEST['studentId']) || !isset($_REQUEST['content'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+        $studentId = trim(Yii::app()->request->getParam('studentId'));
+        $content = trim(Yii::app()->request->getParam('content', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        if (!ctype_digit($studentId) || $studentId < 0 || empty($studentId)) {
+            $this->_return('MSG_ERR_FAIL_STUDENT');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 添加留言操作
+            User::model()->postMessage($user_id, $studentId, $content);
+            $this->_return('MSG_SUCCESS');
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
+
+    /**
+     * 教师查看留言详情接口
+     */
+    public function actionMyMessageList()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 教师查看留言信息列表
+            $data = User::model()->myMessageList($user_id);
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
+
+    /**
+     * 教师查看留言详情接口
+     */
+    public function actionMyMessageDetail()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
+        || !isset($_REQUEST['studentId']) || !isset($_REQUEST['messageId'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+        $studentId = trim(Yii::app()->request->getParam('studentId', null));
+        $messageId = trim(Yii::app()->request->getParam('messageId', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        if (!ctype_digit($studentId) || $studentId < 0 || empty($studentId)) {
+            $this->_return('MSG_ERR_FAIL_STUDENT');
+        }
+
+        if (!ctype_digit($messageId) || $messageId < 0) {
+            $this->_return('MSG_ERR_FAIL_MESSAGE');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 教师查看留言详情
+            $data = User::model()->myMessageDetail($user_id, $studentId, $messageId);
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
 }
