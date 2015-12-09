@@ -28,6 +28,9 @@ $_error_code = array(
 		'MSG_ERR_FAIL_DEPARTMENT'			=> array('20012', '校区参数错误'),
 		'MSG_ERR_FAIL_STUDENT'				=> array('20013', '学员参数错误'),
 		'MSG_ERR_FAIL_MESSAGE'				=> array('20014', '留言参数错误'),
+		'MSG_ERR_FAIL_NAME'					=> array('20015', '名称格式错误'),
+		'MSG_ERR_FAIL_REASON'				=> array('20016', '投诉格式错误'),
+		'MSG_ERR_FAIL_PAGE'					=> array('20017', '分页参数错误'),
 
 
 		// 其它
