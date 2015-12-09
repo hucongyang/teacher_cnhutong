@@ -196,12 +196,12 @@ class TaskController extends ApiPublicController
             $this->_return('MSG_ERR_NO_USER');
         }
 
-        if (empty($lessonDetails) || $this->isJson($lessonDetails)) {
-            $this->_return('MSG_ERR_FAIL_LESSONDETAILS');
-        }
-
         // 解析json,获得课时id: $lessonStudentId, 修改的课时内容: $modifyContent, 教师课时评分: $teacherGrade, 教师课时评价: $teacherEval
         $lessonJson = json_decode($lessonDetails, true);
+        
+        if (empty($lessonDetails) || !$lessonJson ) {
+            $this->_return('MSG_ERR_FAIL_LESSONDETAILS');
+        }
 
         // 验证token
         if (Token::model()->verifyToken($user_id, $token)) {
