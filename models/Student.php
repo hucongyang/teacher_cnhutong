@@ -67,4 +67,91 @@ class Student extends CActiveRecord
         }
         return $data;
     }
+
+    /**
+     * 获取学员详情信息
+     * @param $studentId
+     * @return array|bool
+     */
+    public function getStudentInfo($studentId)
+    {
+        $data = array();
+        $data1 = array();
+        try {
+            $con_student = Yii::app()->cnhutong;
+            // 学员基本信息
+            $sql1 = "SELECT m.id AS studentId, m.name AS studentName, m.birthday AS studentAge
+                    FROM ht_member m
+                    WHERE m.id = " . $studentId . "
+                    ";
+            $command1 = $con_student->createCommand($sql1)->queryAll();
+            $result = array();
+            foreach($command1 as $row) {
+                $data['studentInfo']['studentId']                    = $row['studentId'];
+                $data['studentInfo']['studentName']                  = $row['studentName'];
+                $age = date('Y', strtotime("now")) - substr($row['studentAge'], 0, 4);
+                if (empty($age)) {
+                    $age = null;
+                }
+                $data['studentInfo']['studentAge']                   = $age;
+            }
+
+            // 学员合同信息
+            $sql2 = "select ct.id AS contractId, cd.id AS contractDetailId, ct.contract_serial AS contractSerialId,
+                      cd.course_id AS courseId, ifnull(c.course, '') AS courseName,
+                      cd.teacher_id AS teacherId, m.name AS teacherName,
+                      cd.lesson_cnt AS cntLesson, ifnull(cd.lesson_finished_cnt, '') AS finishLesson,
+                      ifnull(cd.start_date, '') AS startDate, ifnull(cd.end_date, '') AS endDate
+                    from ht_contract ct LEFT JOIN ht_contract_detail cd on ct.id=cd.contract_id
+                      LEFT JOIN ht_member m on m.id = cd.teacher_id
+                      LEFT JOIN ht_course c on c.id = cd.course_id
+                    where cd.step >= 0 and cd.student_id = " . $studentId . "
+                    order by cd.create_time desc";
+            $command2 = $con_student->createCommand($sql2)->queryAll();
+
+            $detailArr = array(array());
+            foreach($command2 as $row) {
+
+                $key = $row['contractSerialId'];
+                if(array_key_exists($key, $detailArr)) {
+                    array_push($detailArr[$key], $row);
+                } else {
+                    $detailArr[$key][] = $row;
+                }
+            }
+
+            $data['studentInfo']['contracts'] = array_filter($detailArr);
+
+        } catch (Exception $e) {
+            error_log($e);
+            return false;
+        }
+        return $data;
+    }
+
+    /**
+     * 根据合同明细ID 获得补课课时
+     * @param $contractDetailId
+     * @return array|bool
+     */
+    public function getLessLessonByContractDetailId($contractDetailId)
+    {
+        $data = array();
+        $time = date('Y-m-d', strtotime("-1 day"));
+        try {
+            $con_student = Yii::app()->cnhutong;
+            $sql = "select count(1)*2 as defilessoncnt
+                    from ht_lesson_student s
+                    where s.date < '" . $time . "'
+                    and s.step not in(0, 1, 3, 8)
+                    and s.contract_detail_id = " . $contractDetailId . "
+                    ";
+            $command = $con_student->createCommand($sql)->queryScalar();
+            $data = $command;
+        } catch (Exception $e) {
+            error_log($e);
+            return false;
+        }
+        return $data;
+    }
 }
