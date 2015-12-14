@@ -309,4 +309,26 @@ class User extends CActiveRecord
         }
         return $data;
     }
+
+    /**
+     * 教师投诉信息接口
+     * @return bool
+     */
+    public function myComplaint()
+    {
+        try {
+            $con_user = Yii::app()->cnhutong;
+            $table_name = '';
+            $data = $con_user->createCommand()->insert($table_name,
+                array(
+                    ''
+                )
+            );
+
+        } catch (Exception $e) {
+            error_log($e);
+            return false;
+        }
+        return $data;
+    }
 }

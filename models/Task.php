@@ -36,6 +36,7 @@ class Task extends CActiveRecord
 
         } catch (Exception $e) {
             error_log($e);
+            var_dump($e);
             return false;
         }
     }

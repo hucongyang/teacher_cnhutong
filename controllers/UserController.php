@@ -347,4 +347,52 @@ class UserController extends ApiPublicController
             $this->_return('MSG_ERR_TOKEN');
         }
     }
+
+    /**
+     * 教师投诉信息
+     */
+    public function actionMyComplaint()
+    {
+        if (!isset($_REQUEST['teacherId']) || !isset($_REQUEST['token'])
+        || !isset($_REQUEST['departmentName']) || !isset($_REQUEST['name'])
+        || !isset($_REQUEST['reason'])) {
+            $this->_return('MSG_ERR_LESS_PARAM');
+        }
+
+        $user_id = trim(Yii::app()->request->getParam('teacherId', null));
+        $token = trim(Yii::app()->request->getParam('token', null));
+        $departmentName = trim(Yii::app()->request->getParam('departmentName', null));
+        $name = trim(Yii::app()->request->getParam('name', null));
+        $reason = trim(Yii::app()->request->getParam('reason', null));
+
+        if (!ctype_digit($user_id)) {
+            $this->_return('MSG_ERR_FAIL_PARAM');
+        }
+
+        // 用户名不存在,返回错误
+        if ($user_id < 1) {
+            $this->_return('MSG_ERR_NO_USER');
+        }
+
+        if (empty($departmentName) || !preg_match("/^[\x7f-\xff]+$/", $departmentName)) {
+            $this->_return('MSG_ERR_FAIL_DEPARTMENT');
+        }
+
+        if (empty($name) || !preg_match("/^[\x7f-\xff]+$/", $name)) {
+            $this->_return('MSG_ERR_FAIL_NAME');
+        }
+
+        if (empty($reason)) {
+            $this->_return('MSG_ERR_FAIL_REASON');
+        }
+
+        // 验证token
+        if (Token::model()->verifyToken($user_id, $token)) {
+            // 教师投诉/举手信息
+            $data = '1';
+            $this->_return('MSG_SUCCESS', $data);
+        } else {
+            $this->_return('MSG_ERR_TOKEN');
+        }
+    }
 }

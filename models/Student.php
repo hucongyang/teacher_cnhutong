@@ -109,18 +109,49 @@ class Student extends CActiveRecord
                     order by cd.create_time desc";
             $command2 = $con_student->createCommand($sql2)->queryAll();
 
-            $detailArr = array(array());
-            foreach($command2 as $row) {
+            // 合并相同合同
+//            $detailArr = array(array());
+//            foreach($command2 as $row) {
+//
+//                $key = $row['contractSerialId'];
+//                if(array_key_exists($key, $detailArr)) {
+//                    array_push($detailArr[$key], $row);
+//                } else {
+//                    $detailArr[$key][] = $row;
+//                }
+//            }
+//
+//            $data['studentInfo']['contracts'] = array_filter($detailArr);
 
-                $key = $row['contractSerialId'];
-                if(array_key_exists($key, $detailArr)) {
-                    array_push($detailArr[$key], $row);
-                } else {
-                    $detailArr[$key][] = $row;
+            $result2 = array();
+            foreach ($command2 as $row) {
+                $result2['contractSerialId']            = $row['contractSerialId'];
+                if ($row['courseId'] == 0 || empty($row['courseId'])) {
+                    $row['courseId'] = '';
                 }
+                $result2['courseId']                    = $row['courseId'];
+                $result2['courseName']                  = $row['courseName'];
+                $result2['teacherId']                   = $row['teacherId'];
+                $result2['teacherName']                 = $row['teacherName'];
+                $result2['cntLesson']                   = $row['cntLesson'];
+                $result2['finishLesson']                = $row['finishLesson'];
+
+                // 缺课课程
+                $result2['lessLesson']                  = self::getLessLessonByContractDetailId($row['contractSerialId']);
+                if (empty($result2['lessLesson'])) {
+                    $result2['lessLesson'] = '';
+                }
+                $result2['startDate']                   = $row['startDate'];
+                $result2['endDate']                   = $row['endDate'];
+
+                $result2['status'] = 0;
+                if ($row['cntLesson'] == $row['finishLesson']) {
+                    $result2['status'] = 1;
+                }
+
+                $data['studentInfo']['contracts'][]   =   $result2;
             }
 
-            $data['studentInfo']['contracts'] = array_filter($detailArr);
 
         } catch (Exception $e) {
             error_log($e);
@@ -136,7 +167,7 @@ class Student extends CActiveRecord
      */
     public function getLessLessonByContractDetailId($contractDetailId)
     {
-        $data = array();
+        $data = '';
         $time = date('Y-m-d', strtotime("-1 day"));
         try {
             $con_student = Yii::app()->cnhutong;
