@@ -107,24 +107,31 @@ class Task extends CActiveRecord
             // 未到时间的课时不显示
             $result = array();
             $merge = array();
-            foreach ($command2 as $row) {
-                if (substr($row['lessonTime'], -5) < $time) {
-                    $result['lessonDate'] = $row['lessonDate'];
-                    $result['lessonTime'] = $row['lessonTime'];
-                    $result['subjectName'] = $row['subjectName'];
-                    $result['departmentId'] = $row['departmentId'];
-                    $result['departmentName'] = $row['departmentName'];
-                    $result['studentNum'] = $row['studentNum'];
-                    $merge[] = $result;
+            if ($command2) {
+
+                foreach ($command2 as $row) {
+                    if (substr($row['lessonTime'], -5) < $time) {
+                        $result['lessonDate'] = $row['lessonDate'];
+                        $result['lessonTime'] = $row['lessonTime'];
+                        $result['subjectName'] = $row['subjectName'];
+                        $result['departmentId'] = $row['departmentId'];
+                        $result['departmentName'] = $row['departmentName'];
+                        $result['studentNum'] = $row['studentNum'];
+                        $merge[] = $result;
 //                    $data[" $date "][] = $result;
 //                } else {
 //                    $data[" $date "] = $result;
 //                }else {
 //                    $merge[] = $result;
-                }
+                    }
 //                $data['task'] = array_merge($data['task'], $merge);
-                $data['task']['today'] = $merge;
+                    $data['task']['today'] = $merge;
+                }
+
+            } else {
+                $data['task']['today'] = [];
             }
+
 
         } catch (Exception $e) {
             error_log($e);
