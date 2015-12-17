@@ -30,7 +30,7 @@ class UserController extends ApiPublicController
 
         if ($username == $user_info['username']) {
             if ($password == '') {
-                $this->_return('MSG_ERR_PASSWORD_ERR');
+                $this->_return('MSG_ERR_PASSWORD_WRONG');
             }
         }
 
