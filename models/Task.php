@@ -99,9 +99,9 @@ class Task extends CActiveRecord
             $command2 = $con_task->createCommand($sql2)->queryAll();
 
             if ($rHour >= 15) {                 // 时间限制,当前日期时间 15时 以后不显示前一天的课时任务
-                $data['task']['yesterday'] = array();
+                $data['yesterday'] = array();
             } else {
-                $data['task']['yesterday'] = $command1;
+                $data['yesterday'] = $command1;
             }
 //            $data[" $date "] = $command2;
             // 未到时间的课时不显示
@@ -125,11 +125,11 @@ class Task extends CActiveRecord
 //                    $merge[] = $result;
                     }
 //                $data['task'] = array_merge($data['task'], $merge);
-                    $data['task']['today'] = $merge;
+                    $data['today'] = $merge;
                 }
 
             } else {
-                $data['task']['today'] = [];
+                $data['today'] = [];
             }
 
 
