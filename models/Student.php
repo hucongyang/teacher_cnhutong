@@ -167,7 +167,6 @@ class Student extends CActiveRecord
      */
     public function getLessLessonByContractDetailId($contractDetailId)
     {
-        $data = '';
         $time = date('Y-m-d', strtotime("-1 day"));
         try {
             $con_student = Yii::app()->cnhutong;

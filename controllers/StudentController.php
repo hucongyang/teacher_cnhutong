@@ -73,6 +73,9 @@ class StudentController extends ApiPublicController
         if (Token::model()->verifyToken($user_id, $token)) {
             // 获取学员详细信息
             $data = Student::model()->getStudentInfo($studentId);
+            if (!$data) {
+                $this->_return('MSG_NO_STUDENT');
+            }
             $this->_return('MSG_SUCCESS', $data);
         } else {
             $this->_return('MSG_ERR_TOKEN');
