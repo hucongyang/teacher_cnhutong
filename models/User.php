@@ -80,13 +80,13 @@ class User extends CActiveRecord
                     m.`name` AS teacherName, m.departments_managed AS departmentManaged
                     FROM ht_member m
                     WHERE m.id = '" . $user_id . "' ";
-            $command = $con_user->createCommand($sql)->queryAll();
+            $command = $con_user->createCommand($sql)->queryRow();
             // 获得该教师的校区信息
-            $command[0]['departments'] = self::getDepartmentsById($command[0]['departmentManaged']);
+            $command['departments'] = self::getDepartmentsById($command['departmentManaged']);
             // 获得该教师的课程信息
-            $command[0]['subjects'] = self::getSubjectsByUserId($user_id);
+            $command['subjects'] = self::getSubjectsByUserId($user_id);
             // 释放 departmentManaged
-            unset($command[0]['departmentManaged']);
+            unset($command['departmentManaged']);
             $data = $command;
         } catch (Exception $e) {
             error_log($e);
