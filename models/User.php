@@ -81,10 +81,25 @@ class User extends CActiveRecord
                     FROM ht_member m
                     WHERE m.id = '" . $user_id . "' ";
             $command = $con_user->createCommand($sql)->queryRow();
+
             // 获得该教师的校区信息
-            $command['departments'] = self::getDepartmentsById($command['departmentManaged']);
+//            $command['departments'] = self::getDepartmentsById($command['departmentManaged']);
+            $departments = self::getDepartmentsById($command['departmentManaged']);
+            if ($departments) {
+                $command['departments'] = $departments;
+            } else {
+                $command['departments'] = [];
+            }
+
             // 获得该教师的课程信息
-            $command['subjects'] = self::getSubjectsByUserId($user_id);
+//            $command['subjects'] = self::getSubjectsByUserId($user_id);
+            $subjects = self::getSubjectsByUserId($user_id);
+            if ($subjects) {
+                $command['subjects'] = $subjects;
+            } else {
+                $command['subjects'] = [];
+            }
+
             // 释放 departmentManaged
             unset($command['departmentManaged']);
             $data = $command;
