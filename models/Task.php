@@ -155,14 +155,14 @@ class Task extends CActiveRecord
             $con_task = Yii::app()->cnhutong;
             // 获得任务签到
             $sql = "SELECT
-                    a.id AS lessonStudentId, a.student_id AS studenId, b.`name` AS studentName
+                    a.id AS lessonStudentId, a.student_id AS studenId, b.`name` AS studentName, a.step
                     FROM ht_lesson_student AS a
                     LEFT JOIN ht_member b ON a.student_id = b.id
                     WHERE a.step >= 0 AND a.step NOT IN (4,5)
                     AND a.teacher_id = " . $user_id ."
                     AND a.date = '" . $lessonDate . "'
                     AND a.time = '" . $lessonTime . "'
-                    AND a.status_id NOT IN (1, 2, 4)
+                    AND a.status_id NOT IN (2, 4)
                     order by a.student_id";
             $command = $con_task->createCommand($sql)->queryAll();
             $data['lessonStudents'] = $command;
@@ -222,7 +222,7 @@ class Task extends CActiveRecord
             $con_task = Yii::app()->cnhutong;
             // 获得任务课时详情
             $sql = "SELECT
-                    a.id AS lessonStudentId, a.student_id AS studentId, m.`name` AS studentName, a.step AS lessonStatus,
+                    a.id AS lessonStudentId, a.student_id AS studentId, m.`name` AS studentName, a.step AS step,
                     IFNULL(lt.topic, '') AS lessonContent,
                     IFNULL(a.student_rating, '') AS studentGrade, a.student_comment AS studentEval
                     FROM ht_lesson_student AS a
@@ -233,7 +233,7 @@ class Task extends CActiveRecord
                     AND a.teacher_id = " . $user_id . "
                     AND a.date = '" . $lessonDate . "'
                     AND a.time = '" . $lessonTime . "'
-                    AND a.status_id NOT IN (1, 2, 4)
+                    AND a.status_id NOT IN (2, 4)
                     order by a.student_id";
             $command = $con_task->createCommand($sql)->queryAll();
             $data['lessonDetails'] = $command;
