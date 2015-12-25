@@ -87,13 +87,13 @@ class Student extends CActiveRecord
             $command1 = $con_student->createCommand($sql1)->queryAll();
             $result = array();
             foreach($command1 as $row) {
-                $data['studentInfo']['studentId']                    = $row['studentId'];
-                $data['studentInfo']['studentName']                  = $row['studentName'];
+                $data['studentId']                    = $row['studentId'];
+                $data['studentName']                  = $row['studentName'];
                 $age = date('Y', strtotime("now")) - substr($row['studentAge'], 0, 4);
                 if (empty($age)) {
                     $age = null;
                 }
-                $data['studentInfo']['studentAge']                   = $age;
+                $data['studentAge']                   = $age;
             }
 
             // 学员合同信息
@@ -149,7 +149,7 @@ class Student extends CActiveRecord
                     $result2['status'] = 1;
                 }
 
-                $data['studentInfo']['contracts'][]   =   $result2;
+                $data['contracts'][]   =   $result2;
             }
 
 
