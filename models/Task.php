@@ -223,8 +223,9 @@ class Task extends CActiveRecord
             // 获得任务课时详情
             $sql = "SELECT
                     a.id AS lessonStudentId, a.student_id AS studentId, m.`name` AS studentName, a.step AS step,
-                    IFNULL(lt.topic, '') AS lessonContent,
-                    IFNULL(a.student_rating, '') AS studentGrade, a.student_comment AS studentEval
+                    IFNULL(lt.topic, '') AS lessonContent, IFNULL(a.lesson_content, '') AS modifyContent,
+                    IFNULL(a.student_rating, '') AS studentGrade, a.student_comment AS studentEval,
+                    IFNULL(a.teacher_rating, '') AS teacherGrade, a.teacher_comment AS teacherEval
                     FROM ht_lesson_student AS a
                     LEFT JOIN ht_member m ON m.id = a.student_id
                     LEFT JOIN ht_lesson_student_topic lst ON lst.lesson_student_id = a.id
@@ -239,7 +240,6 @@ class Task extends CActiveRecord
             $data['lessonDetails'] = $command;
         } catch (Exception $e) {
             error_log($e);
-            var_dump($e);
             return false;
         }
         return $data;

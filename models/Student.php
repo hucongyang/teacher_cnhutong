@@ -48,7 +48,7 @@ class Student extends CActiveRecord
 //                    LIMIT 10";
 
             // 新学员列表
-            $sql = "select cd.student_id, m.`name` as studentname
+            $sql = "select cd.student_id AS studentId, m.`name` as studentName
                     from ht_lesson_student cd
                       LEFT JOIN ht_member m on m.id = cd.student_id
                       LEFT JOIN ht_course c on c.id = cd.course_id
