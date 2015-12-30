@@ -88,7 +88,7 @@ class User extends CActiveRecord
             if ($departments) {
                 $command['departments'] = $departments;
             } else {
-                $command['departments'] = [];
+                $command['departments'] = array();
             }
 
             // 获得该教师的课程信息
@@ -97,7 +97,7 @@ class User extends CActiveRecord
             if ($subjects) {
                 $command['subjects'] = $subjects;
             } else {
-                $command['subjects'] = [];
+                $command['subjects'] = array();
             }
 
             // 释放 departmentManaged

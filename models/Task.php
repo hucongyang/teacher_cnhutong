@@ -162,7 +162,7 @@ class Task extends CActiveRecord
                 }
 
             } else {
-                $data['today'] = [];
+                $data['today'] = array();
             }
 
 
