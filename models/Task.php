@@ -27,6 +27,7 @@ class Task extends CActiveRecord
 
     /**
      * 验证课时编号id是否可以提交签到签到和课程详情
+     *
      * @param $lessonStudentId
      * @return bool
      */
@@ -35,6 +36,7 @@ class Task extends CActiveRecord
         $nowDate = date("Y-m-d");       // 当前日期
         $nowDate_1 = date("Y-m-d", strtotime("-1 day"));        // 当前日期减 1
         $nowTime = date("H:i");         // 当前时间
+        $overTime = '15:00';            // 过期时间
         try {
             $con_task = Yii::app()->cnhutong;
             $sql = "SELECT a.date, a.time
@@ -48,10 +50,22 @@ class Task extends CActiveRecord
             } elseif ($command['date'] < $nowDate_1) {
                 return false;
             } else {
-                if (substr($command['time'], -5) < $nowTime) {
-                    return false;
+//                if (substr($command['time'], -5) > $nowTime) {
+//                    return false;
+//                }
+//                return true;
+                // 昨天的课时签到限制
+                if ( ($command['date'] == $nowDate_1) && (substr($command['time'], -5) < $overTime) ) {
+                    return true;
                 }
-                return true;
+
+                // 今天的课时签到限制
+                if ( ($command['date'] == $nowDate) && (substr($command['time'], -5) < $nowTime) ) {
+                    return true;
+                }
+
+                return false;
+
             }
 
         } catch (Exception $e) {
