@@ -55,7 +55,7 @@ class Task extends CActiveRecord
 //                }
 //                return true;
                 // 昨天的课时签到限制
-                if ( ($command['date'] == $nowDate_1) && (substr($command['time'], -5) < $overTime) ) {
+                if ( ($command['date'] == $nowDate_1) && ($nowTime < $overTime) ) {
                     return true;
                 }
 
