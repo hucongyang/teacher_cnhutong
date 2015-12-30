@@ -204,6 +204,11 @@ class TaskController extends ApiPublicController
             $this->_return('MSG_ERR_FAIL_LESSONDETAILS');
         }
 
+        // 解析json，获得课时id: $lessonStudentId 和课时step: $step
+        if (!Task::model()->verifyPost($lessonJson)) {
+            $this->_return('MSG_OVER_TIME');
+        }
+
         // 验证token
         if (Token::model()->verifyToken($user_id, $token)) {
             // 提交任务课时详情内容
