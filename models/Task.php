@@ -10,6 +10,26 @@ class Task extends CActiveRecord
         return parent::model($className);
     }
 
+    /**
+     * 验证提交课程编号
+     * @param $lessonJson
+     * @return bool
+     */
+    public function verifyPost($lessonJson)
+    {
+        foreach ($lessonJson as $row) {
+            if (!self::verifyTask($row['lessonStudentId'])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 验证课时编号id是否可以提交签到签到和课程详情
+     * @param $lessonStudentId
+     * @return bool
+     */
     public function verifyTask($lessonStudentId)
     {
         $nowDate = date("Y-m-d");       // 当前日期
@@ -22,7 +42,7 @@ class Task extends CActiveRecord
                     WHERE a.id = '" . $lessonStudentId . "'
                     ";
             $command = $con_task->createCommand($sql)->queryRow();
-            var_dump($sql);
+//            var_dump($sql);
             if ($command['date'] > $nowDate) {
                 return false;
             } elseif ($command['date'] < $nowDate_1) {
@@ -36,7 +56,6 @@ class Task extends CActiveRecord
 
         } catch (Exception $e) {
             error_log($e);
-            var_dump($e);
             return false;
         }
     }
